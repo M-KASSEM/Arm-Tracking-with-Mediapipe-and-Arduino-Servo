@@ -1,0 +1,83 @@
+#+TITLE: Arm Tracking with Mediapipe and Arduino Servo
+#+AUTHOR: Mohammad Kassem
+#+DATE: <2025-09-04 Thu>
+
+* Overview
+This project demonstrates real-time *arm tracking* using a webcam, *Google’s Mediapipe Pose* solution, and *OpenCV* in Python.  
+The elbow angle of the user’s left arm is detected and mapped to a *servo motor* controlled by an *Arduino*.  
+This enables human motion to directly control a physical actuator.
+
+* Repository Contents
+- =arm_control.py= :: Python script for webcam capture, pose detection, elbow angle computation, and serial communication.
+- =servo_control.ino= :: Arduino sketch for reading servo angles from serial and controlling a servo motor.
+
+* Hardware Requirements
+- Arduino board (tested with Arduino Mega)
+- SG90 or similar servo motor
+- Webcam
+- USB connection (PC ↔ Arduino)
+
+* Wiring
+Servo motor connections to Arduino:
+
+| Servo Pin           | Arduino Pin |
+|---------------------+-------------|
+| VCC (Red)           | 5V          |
+| GND (Brown/Black)   | GND         |
+| PWM (Orange/Yellow) | D4          |
+
+* Software Requirements
+** Python Side
+- Python 3.8+
+- OpenCV :: =pip install opencv-python=
+- Mediapipe :: =pip install mediapipe=
+- PySerial :: =pip install pyserial=
+
+** Arduino Side
+- Arduino IDE
+- Standard =Servo.h= library (bundled with Arduino IDE)
+
+* How It Works
+1. Python captures webcam frames with OpenCV.
+2. Mediapipe Pose extracts landmarks (shoulder, elbow, wrist).
+3. Elbow angle is computed using vector math:
+   - 180° → arm straight
+   - smaller angles → arm bent
+4. The angle is smoothed and mapped to servo angle range (20°–170°).
+5. The mapped angle is sent via serial to Arduino.
+6. Arduino receives the angle and drives the servo.
+
+* Running the Project
+** Step 1: Upload Arduino Code
+- Open =servo_control.ino= in Arduino IDE.
+- Select your board and COM port.
+- Upload the sketch.
+
+** Step 2: Run Python Script
+- Adjust the serial port in =arm_control.py=  
+  - Linux → =/dev/ttyXXXX=  
+  - Windows → =COMX (X is number)=
+- Run:
+  #+begin_src shell
+  python arm_control.py
+  #+end_src
+
+** Step 3: View Output
+- Live video feed shows arm tracking with landmarks and angles.
+- Servo rotates in real time, mirroring the elbow angle.
+
+* Notes
+- Servo angle limits (=SERVO_MIN=, =SERVO_MAX=) prevent mechanical stress.
+- Human angle calibration (=THETA_MIN=, =THETA_MAX=) may need adjustment for your camera setup.
+- Low-pass filter (=ALPHA=) controls smoothness vs responsiveness.
+
+* Demo Flow
+1. User bends arm at elbow.  
+2. Mediapipe estimates elbow angle.  
+3. Python maps human angle → servo angle.  
+4. Servo motor moves in sync with arm.  
+
+* Example Visualization
+This video shows how the servo motor, with two sticks connected to it, follows the movement of my arm
+* License
+This project is for educational purposes only.  
