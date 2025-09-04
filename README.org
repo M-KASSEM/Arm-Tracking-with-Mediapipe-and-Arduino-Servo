@@ -79,5 +79,7 @@ Servo motor connections to Arduino:
 
 * Example Visualization
 This video shows how the servo motor, with two sticks connected to it, follows the movement of my arm
+
+https://github.com/user-attachments/assets/0b70edd4-b656-42b0-a3c7-1fd7117abc02
 * License
 This project is for educational purposes only.  
